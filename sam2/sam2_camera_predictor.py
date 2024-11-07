@@ -67,7 +67,7 @@ class SAM2CameraPredictor(SAM2Base):
     def load_first_frame(self, img):
 
         self.condition_state = self._init_state(
-            offload_video_to_cpu=False, offload_state_to_cpu=False
+            offload_video_to_cpu=True, offload_state_to_cpu=True
         )
         img, width, height = self.perpare_data(img, image_size=self.image_size)
         self.condition_state["images"] = [img]
@@ -86,8 +86,8 @@ class SAM2CameraPredictor(SAM2Base):
 
     def _init_state(
         self,
-        offload_video_to_cpu=False,
-        offload_state_to_cpu=False,
+        offload_video_to_cpu=True,
+        offload_state_to_cpu=True,
     ):
         self.condition_state = {}
 

@@ -25,6 +25,12 @@ def main(all_ok_bboxes, output_video):
     shutil.rmtree('/content/output', ignore_errors=True)
     os.makedirs('/content/output', exist_ok=True)
 
+
+    out_mask_dir = "/content/output_mask"
+    os.makedirs(out_dir, exist_ok=True)
+    import shutil
+    shutil.rmtree("/content/output_mask", ignore_errors=True)
+    os.makedirs("/content/output_mask", exist_ok=True)
     cap = cv2.VideoCapture(output_video)
 
     if_init = False
@@ -80,7 +86,8 @@ def main(all_ok_bboxes, output_video):
                 #all_mask = cv2.cvtColor(dilated_mask, cv2.COLOR_GRAY2BGR)  # 将 all_mask 转换为三通道图像
                 all_mask = dilated_mask.astype(np.uint8) * 255 
                 # 保存掩膜
-                cv2.imwrite('/content/tem.jpg', all_mask * 255)
+                cv2.imwrite("/content/output_mask/" + str(n) + ".jpg", all_mask * 255)
+                #cv2.imwrite('/content/tem.jpg', all_mask * 255)
                 #image = cv2.imread('/content/tem.jpg')
                 masked_image = cv2.bitwise_and(frame, frame, mask=all_mask)
                 # 将掩膜应用于原始图片  

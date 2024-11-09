@@ -15,8 +15,8 @@ def main(all_ok_bboxes, output_video):
     # 设置工作目录
     os.chdir("/content/segment-anything-2-real-time/")
 
-    checkpoint = "./checkpoints/sam2_hiera_large.pt"
-    model_cfg = "sam2_hiera_l.yaml"
+    checkpoint = "./checkpoints/sam2.1_hiera_large.pt"
+    model_cfg = "sam2.1_hiera_l.yaml"
     predictor = build_sam2_camera_predictor(model_cfg, checkpoint)
 
     out_dir = "/content/output"

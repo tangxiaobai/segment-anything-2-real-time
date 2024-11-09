@@ -68,8 +68,28 @@ def main(all_ok_bboxes, output_video):
 
                     all_mask = cv2.bitwise_or(all_mask, out_mask)
 
-                all_mask = cv2.cvtColor(all_mask, cv2.COLOR_GRAY2RGB)
-                frame = cv2.addWeighted(frame, 1, all_mask, 0.5, 0)
+                #all_mask = cv2.cvtColor(all_mask, cv2.COLOR_GRAY2RGB)
+                #frame = cv2.addWeighted(frame, 1, all_mask, 0.5, 0)
+     
+
+                # 假设 all_mask 和 frame 已经定义
+                kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
+
+                # 对 all_mask 进行膨胀操作
+                dilated_mask = cv2.dilate(all_mask, kernel, iterations=1)
+                #all_mask = cv2.cvtColor(dilated_mask, cv2.COLOR_GRAY2BGR)  # 将 all_mask 转换为三通道图像
+                all_mask = dilated_mask.astype(np.uint8) * 255 
+                # 使用掩膜从原始图片中提取部分区域
+                cv2.imwrite('/content/tem.jpg', frame)
+                image = cv2.imread('/content/tem.jpg')
+                masked_image = cv2.bitwise_and(image, image, mask=all_mask)
+                # 将掩膜应用于原始图片  
+                blurred_image = cv2.GaussianBlur(frame, (21, 21), 500)  # 使用较大的核大小进行模糊
+                # 将提取的部分区域叠加到模糊后的图片上
+                blurred_image = cv2.bitwise_and(blurred_image, blurred_image, mask=~all_mask)
+                    # 将提取的部分区域叠加到模糊后的图片上
+                frame = np.where(dilated_mask[:, :, None] > 0, masked_image, blurred_image)
+                # result 即为只保留 all_mask 遮罩内容的图像
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             cv2.imwrite("/content/output/" + str(n) + ".jpg", frame)
             n = n + 1

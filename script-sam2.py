@@ -80,11 +80,12 @@ def main(all_ok_bboxes, output_video):
                 #all_mask = cv2.cvtColor(dilated_mask, cv2.COLOR_GRAY2BGR)  # 将 all_mask 转换为三通道图像
                 all_mask = dilated_mask.astype(np.uint8) * 255 
                 # 使用掩膜从原始图片中提取部分区域
-                cv2.imwrite('/content/tem.jpg', frame)
-                image = cv2.imread('/content/tem.jpg')
-                masked_image = cv2.bitwise_and(image, image, mask=all_mask)
+                #cv2.imwrite('/content/tem.jpg', frame)
+                #image = cv2.imread('/content/tem.jpg')
+                masked_image = cv2.bitwise_and(frame, frame, mask=all_mask)
                 # 将掩膜应用于原始图片  
-                blurred_image = cv2.GaussianBlur(frame, (21, 21), 500)  # 使用较大的核大小进行模糊
+                #blurred_image = cv2.GaussianBlur(frame, (21, 21), 500)  # 使用较大的核大小进行模糊
+                blurred_image =cv2.medianBlur(frame, 51)
                 # 将提取的部分区域叠加到模糊后的图片上
                 blurred_image = cv2.bitwise_and(blurred_image, blurred_image, mask=~all_mask)
                     # 将提取的部分区域叠加到模糊后的图片上

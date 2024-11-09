@@ -83,8 +83,10 @@ if __name__ == "__main__":
     parser.add_argument('--video', type=str, required=True, help='Path to the input video')
 
     args = parser.parse_args()
+    import pickle
 
-    # 将 bboxes JSON 字符串转换为列表
-    all_ok_bboxes = json.loads(args.bboxes)
-
+    # 从文件中加载变量
+    with open('/content/all_ok_bboxes.pkl', 'rb') as file:
+        all_ok_bboxes = pickle.load(file)
+    
     main(all_ok_bboxes, args.video)

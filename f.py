@@ -34,8 +34,11 @@ FLORENCE_MODEL, FLORENCE_PROCESSOR = load_florence_model(device=DEVICE)
 
 def main(output_video):
     os.chdir("/content/florence-sam-colab")
-    texts = ['men', 'the table', 'ball']
-    
+    import pickle
+    # 从文件中加载变量
+    with open('/content/texts.pkl', 'rb') as file:
+        texts = pickle.load(file)
+    print(texts)
     frame_generator = sv.get_video_frames_generator(output_video)
     frame = next(frame_generator)
     frame = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
@@ -60,7 +63,7 @@ def main(output_video):
             result=result,
             resolution_wh=frame.size
         )
-
+        print(result)
         for bbox, label in zip(result['<OPEN_VOCABULARY_DETECTION>']['bboxes'], result['<OPEN_VOCABULARY_DETECTION>']['bboxes_labels']):
             if label == 'men':
                 all_ok_bboxes.append([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])

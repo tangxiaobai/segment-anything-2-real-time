@@ -9,10 +9,14 @@ import torch
 from PIL import Image
 from tqdm import tqdm
 import sys
+import json
 sys.path.append('/content/florence-sam-colab')
 from utils.video import generate_unique_name, create_directory, delete_directory
 from utils.florence import load_florence_model, run_florence_inference, FLORENCE_DETAILED_CAPTION_TASK, FLORENCE_CAPTION_TO_PHRASE_GROUNDING_TASK, FLORENCE_OPEN_VOCABULARY_DETECTION_TASK
 from utils.modes import IMAGE_INFERENCE_MODES, IMAGE_OPEN_VOCABULARY_DETECTION_MODE, IMAGE_CAPTION_GROUNDING_MASKS_MODE, VIDEO_INFERENCE_MODES
+import pickle
+
+
 
 VIDEO_SCALE_FACTOR = 0.5
 VIDEO_TARGET_DIRECTORY = "tmp"
@@ -37,7 +41,7 @@ def main(output_video):
     frame = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     width, height = frame.size
 
-    print(f"宽度: {width}, 高度: {height}")
+    #print(f"宽度: {width}, 高度: {height}")
     detections_list = []
     all_ok_bboxes = []
 
@@ -65,12 +69,14 @@ def main(output_video):
             if label == 'ball':
                 all_ok_bboxes.append([[bbox[0] - 100, bbox[1]], [bbox[2] + 100, bbox[3]]])
 
-    print(all_ok_bboxes)
-    return all_ok_bboxes
+    #print(all_ok_bboxes)
+    # 保存变量到文件
+    with open('/content/all_ok_bboxes.pkl', 'wb') as file:
+        pickle.dump(all_ok_bboxes, file)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run inference on a video.")
     parser.add_argument("output_video", type=str, help="Path to the output video file")
     args = parser.parse_args()
     all_ok_bboxes = main(args.output_video)
-    print(all_ok_bboxes)
+    #print(all_ok_bboxes)

@@ -92,7 +92,7 @@ def main(all_ok_bboxes, output_video):
                 masked_image = cv2.bitwise_and(frame, frame, mask=all_mask)
                 # 将掩膜应用于原始图片  
                 #blurred_image = cv2.GaussianBlur(frame, (21, 21), 500)  # 使用较大的核大小进行模糊
-                blurred_image =cv2.medianBlur(frame, 51)
+                blurred_image =cv2.medianBlur(frame, 201)
                 # 将提取的部分区域叠加到模糊后的图片上
                 blurred_image = cv2.bitwise_and(blurred_image, blurred_image, mask=~all_mask)
                     # 将提取的部分区域叠加到模糊后的图片上

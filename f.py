@@ -72,14 +72,17 @@ def main(output_video):
         given_area =1000
         # 统计 men 的数量
         men_count = 0
+        men_label_flag = False
         accflag = False
         with open('/content/accflag.pkl', 'wb') as file:
           pickle.dump(accflag, file)
-          
+
         for bbox, label in zip(result['<OPEN_VOCABULARY_DETECTION>']['bboxes'], result['<OPEN_VOCABULARY_DETECTION>']['bboxes_labels']):
             if label == 'men':
+                men_label_flag = True
                 all_ok_bboxes.append([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])
                 men_count += 1
+                print('men add 1',men_count)
             if label == 'ping pong ball':
                 # 计算当前 ping pong ball 的面积
                 area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
@@ -103,8 +106,8 @@ def main(output_video):
             if max(table_areas) < half_area:
                 all_ok_bboxes.append(max_area_bbox)
         # 如果 men 的数量为 1，则打印 result
-        if men_count <= 1:
-            print('men_count <= 1')
+        if men_label_flag and men_count <= 1:
+            print('men_count <= 1',men_count)
             # 保存变量
             accflag = True
             with open('/content/accflag.pkl', 'wb') as file:

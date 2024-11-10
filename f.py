@@ -69,10 +69,16 @@ def main(output_video):
         # 存储所有 the table 的边界框和面积
         table_bboxes = []
         table_areas = []
-
+        given_area =1000
         for bbox, label in zip(result['<OPEN_VOCABULARY_DETECTION>']['bboxes'], result['<OPEN_VOCABULARY_DETECTION>']['bboxes_labels']):
             if label == 'men':
                 all_ok_bboxes.append([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])
+            if label == 'ping pong ball':
+                # 计算当前 ping pong ball 的面积
+                area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
+                # 检查面积是否不超过给定边界框的面积
+                if area <= given_area:
+                    all_ok_bboxes.append([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])
             elif label == 'the table':
                 # 计算当前 the table 的面积
                 area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])

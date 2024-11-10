@@ -64,13 +64,31 @@ def main(output_video):
             resolution_wh=frame.size
         )
         print(result)
+        half_area = width * height * 0.5
+
+        # 存储所有 the table 的边界框和面积
+        table_bboxes = []
+        table_areas = []
+
         for bbox, label in zip(result['<OPEN_VOCABULARY_DETECTION>']['bboxes'], result['<OPEN_VOCABULARY_DETECTION>']['bboxes_labels']):
             if label == 'men':
                 all_ok_bboxes.append([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])
-            if label == 'the table':
-                all_ok_bboxes.append([[bbox[0] - 100, bbox[1]], [bbox[2] + 100, bbox[3]]])
-            if label == 'ball':
-                all_ok_bboxes.append([[bbox[0] - 100, bbox[1]], [bbox[2] + 100, bbox[3]]])
+            elif label == 'the table':
+                # 计算当前 the table 的面积
+                area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
+                table_bboxes.append([[bbox[0] - 100, bbox[1]], [bbox[2] + 100, bbox[3]]])
+                table_areas.append(area)
+            elif label == 'table tennis bat':
+                all_ok_bboxes.append([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])
+
+        # 找到面积最大的 the table
+        if table_areas:
+            max_area_index = table_areas.index(max(table_areas))
+            max_area_bbox = table_bboxes[max_area_index]
+            
+            # 检查面积是否超过50%
+            if max(table_areas) < half_area:
+                all_ok_bboxes.append(max_area_bbox)
 
     #print(all_ok_bboxes)
     # 保存变量到文件

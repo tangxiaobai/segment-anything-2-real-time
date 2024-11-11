@@ -79,10 +79,16 @@ def main(all_ok_bboxes, output_video):
      
 
                 # 假设 all_mask 和 frame 已经定义
-                kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
-
+                #kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+                # 定义腐蚀操作的结构元素
+                kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+                # 对 all_mask 进行腐蚀操作
+                eroded_mask = cv2.erode(all_mask, kernel, iterations=1)
+                all_mask = eroded_mask
                 # 对 all_mask 进行膨胀操作
-                #dilated_mask = cv2.dilate(all_mask, kernel, iterations=1)
+                kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+                dilated_mask = cv2.dilate(all_mask, kernel, iterations=1)
+                all_mask = dilated_mask
                 #all_mask = cv2.cvtColor(dilated_mask, cv2.COLOR_GRAY2BGR)  # 将 all_mask 转换为三通道图像
                 #all_mask = dilated_mask.astype(np.uint8) * 255 
                 # 保存掩膜

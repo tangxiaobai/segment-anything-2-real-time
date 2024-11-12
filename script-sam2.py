@@ -86,7 +86,7 @@ def main(all_ok_bboxes, output_video):
                 eroded_mask = cv2.erode(all_mask, kernel, iterations=1)
                 all_mask = eroded_mask
                 # 对 all_mask 进行膨胀操作
-                kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+                kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
                 dilated_mask = cv2.dilate(all_mask, kernel, iterations=1)
                 all_mask = dilated_mask
                 #all_mask = cv2.cvtColor(dilated_mask, cv2.COLOR_GRAY2BGR)  # 将 all_mask 转换为三通道图像
@@ -96,13 +96,23 @@ def main(all_ok_bboxes, output_video):
                 #cv2.imwrite('/content/tem.jpg', all_mask * 255)
                 #image = cv2.imread('/content/tem.jpg')
                 masked_image = cv2.bitwise_and(frame, frame, mask=all_mask)
-                # 将掩膜应用于原始图片  
+                '''模糊
+                # 将掩膜应用于原始图片 
                 #blurred_image = cv2.GaussianBlur(frame, (21, 21), 500)  # 使用较大的核大小进行模糊
                 blurred_image =cv2.medianBlur(frame, 201)
                 # 将提取的部分区域叠加到模糊后的图片上
                 blurred_image = cv2.bitwise_and(blurred_image, blurred_image, mask=~all_mask)
-                    # 将提取的部分区域叠加到模糊后的图片上
+                # 将提取的部分区域叠加到模糊后的图片上
                 frame = np.where(all_mask[:, :, None] > 0, masked_image, blurred_image)
+                '''
+                 # 创建一个全黑的背景图像
+                black_background = np.zeros_like(frame)
+
+                # 将 frame 的透明度设置为 50%
+                transparent_frame = cv2.addWeighted(frame, 0.15, black_background, 0.85, 0)
+
+                # 将提取的部分区域叠加到透明后的图片上
+                frame = np.where(all_mask[:, :, None] > 0, masked_image, transparent_frame)
                 # result 即为只保留 all_mask 遮罩内容的图像
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             cv2.imwrite("/content/output/" + str(n) + ".jpg", frame)

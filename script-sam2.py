@@ -104,7 +104,7 @@ def main(all_ok_bboxes, output_video):
                 blurred_image = cv2.bitwise_and(blurred_image, blurred_image, mask=~all_mask)
                 # 将提取的部分区域叠加到模糊后的图片上
                 frame = np.where(all_mask[:, :, None] > 0, masked_image, blurred_image)
-                '''
+                
                  # 创建一个全黑的背景图像
                 black_background = np.zeros_like(frame)
 
@@ -113,6 +113,24 @@ def main(all_ok_bboxes, output_video):
 
                 # 将提取的部分区域叠加到透明后的图片上
                 frame = np.where(all_mask[:, :, None] > 0, masked_image, transparent_frame)
+                # result 即为只保留 all_mask 遮罩内容的图像
+                '''
+                # 创建一个全黑的背景图像
+                black_background = np.zeros_like(frame)
+
+                # 创建一个全白的背景图像
+                white_background = np.ones_like(frame) * 255
+
+                # 将 frame 的透明度设置为 50%
+                transparent_frame = cv2.addWeighted(frame, 0.1, black_background, 0.9, 0)
+
+                # 检查每个像素是否为白色，如果是白色，则保持其不透明
+                #white_mask = (frame >= 100).all(axis=-1)
+                white_mask = (frame >= 130).all(axis=-1)
+                frame = np.where(white_mask[:, :, None], frame, transparent_frame)
+
+                # 将提取的部分区域叠加到透明后的图片上
+                frame = np.where(all_mask[:, :, None] > 0, masked_image, frame)
                 # result 即为只保留 all_mask 遮罩内容的图像
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             cv2.imwrite("/content/output/" + str(n) + ".jpg", frame)

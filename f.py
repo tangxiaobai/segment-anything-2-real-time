@@ -47,7 +47,7 @@ def main(output_video):
     #print(f"宽度: {width}, 高度: {height}")
     detections_list = []
     all_ok_bboxes = []
-
+    men_count = 0
     for text in texts:
         _, result = run_florence_inference(
             model=FLORENCE_MODEL,
@@ -71,7 +71,7 @@ def main(output_video):
         table_areas = []
         given_area =1000
         # 统计 men 的数量
-        men_count = 0
+        #men_count = 0
         men_label_flag = False
         accflag = False
         with open('/content/accflag.pkl', 'wb') as file:
@@ -106,7 +106,7 @@ def main(output_video):
             if max(table_areas) < half_area:
                 all_ok_bboxes.append(max_area_bbox)
         # 如果 men 的数量为 1，则打印 result
-        if men_count == 0:
+        if False and men_count == 0:
             print('men_count == 0',men_count)
             # 保存变量
             accflag = True

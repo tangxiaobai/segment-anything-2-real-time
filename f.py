@@ -106,6 +106,12 @@ def main(output_video):
             if max(table_areas) < half_area:
                 all_ok_bboxes.append(max_area_bbox)
         # 如果 men 的数量为 1，则打印 result
+        if men_count == 0:
+            print('men_count == 0',men_count)
+            # 保存变量
+            accflag = True
+            with open('/content/accflag.pkl', 'wb') as file:
+                pickle.dump(accflag, file)
         if men_label_flag and men_count <= 1:
             print('men_count <= 1',men_count)
             # 保存变量
